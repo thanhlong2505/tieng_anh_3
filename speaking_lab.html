@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tiếng Anh 3 — Speaking Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161920;
+    --surface2: #1e2230;
+    --border: #2a2f42;
+    --accent: #4f8aff;
+    --accent2: #a78bfa;
+    --green: #34d399;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --text: #e8eaf0;
+    --muted: #7c85a0;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    min-height: 100vh;
+  }
+
+  /* ── Upload screen ── */
+  #upload-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    gap: 28px;
+    padding: 32px;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .upload-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.15;
+    background: linear-gradient(135deg, #fff 30%, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .upload-sub {
+    color: var(--muted);
+    text-align: center;
+    max-width: 400px;
+    line-height: 1.6;
+  }
+
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 20px;
+    padding: 56px 64px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    width: 100%;
+    max-width: 480px;
+    background: var(--surface);
+  }
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: var(--accent);
+    background: #1a2035;
+  }
+  .drop-icon { font-size: 48px; margin-bottom: 16px; }
+  .drop-text { color: var(--muted); margin-top: 8px; font-size: 14px; }
+  .drop-text span { color: var(--accent); font-weight: 600; }
+  #file-input { display: none; }
+
+  /* ── App layout ── */
+  #app { display: none; }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  .header-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 6px;
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 4px;
+  }
+  .tab-btn {
+    padding: 8px 22px;
+    border-radius: 7px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+    letter-spacing: .5px;
+  }
+  .tab-btn.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .new-file-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all .2s;
+  }
+  .new-file-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── Part panels ── */
+  .part-panel { display: none; padding: 28px; }
+  .part-panel.active { display: block; }
+
+  /* ── Part 1 ── */
+  .p1-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: gap;
+    gap: 12px;
+  }
+
+  .p1-meta {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .p1-meta span { color: var(--accent); font-weight: 700; }
+
+  .p1-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nav-btn {
+    width: 38px; height: 38px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+  }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .q-counter {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    min-width: 60px;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  /* Question card */
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .q-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .q-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .action-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .action-btn.speak-btn { border-color: var(--accent); color: var(--accent); }
+  .action-btn.speak-btn:hover { background: var(--accent); color: #fff; }
+  .action-btn.speak-btn.speaking { background: var(--accent); color: #fff; animation: pulse 1s infinite; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .7; }
+  }
+
+  .hint-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    display: none;
+    animation: fadeIn .2s ease;
+  }
+  .hint-box.show { display: block; }
+  .hint-box .en { color: var(--text); font-weight: 500; }
+  .hint-box .vi { color: var(--yellow); font-size: 13px; margin-top: 6px; font-style: italic; }
+
+  /* word-by-word hint */
+  .word-hint-wrap {
+    margin-top: 10px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .word-hint-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(79,138,255,.12);
+    border: 1px solid rgba(79,138,255,.35);
+    color: var(--accent);
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    animation: fadeIn .15s ease;
+  }
+  .word-hint-status {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .word-hint-ok {
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .word-hint-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 12px;
+    margin-bottom: 4px;
+  }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+
+  /* Answer area */
+  .answer-area {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .answer-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .answer-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .answer-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    resize: vertical;
+    min-height: 90px;
+    outline: none;
+    transition: border-color .2s;
+    line-height: 1.6;
+  }
+  .answer-input:focus { border-color: var(--accent); }
+  .answer-input::placeholder { color: var(--muted); }
+
+  .answer-hint-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+
+  .ans-hint-box {
+    background: var(--surface2);
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 12px;
+    display: none;
+    animation: fadeIn .2s ease;
+  }
+  .ans-hint-box.show { display: block; }
+  .ans-hint-box .en { color: var(--green); font-weight: 500; font-size: 14px; }
+  .ans-hint-box .vi { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+  /* Progress bar */
+  .progress-wrap {
+    background: var(--surface);
+    border-radius: 4px;
+    height: 4px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 4px;
+    transition: width .4s ease;
+  }
+
+  /* ── Part 2 ── */
+  .p2-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 20px;
+    height: calc(100vh - 120px);
+  }
+
+  .p2-sidebar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  .sidebar-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding: 0 4px;
+  }
+
+  .topic-item {
+    padding: 12px 14px;
+    border-radius: 9px;
+    cursor: pointer;
+    margin-bottom: 4px;
+    border: 1px solid transparent;
+    transition: all .15s;
+  }
+  .topic-item:hover { background: var(--surface2); border-color: var(--border); }
+  .topic-item.active { background: #1a2035; border-color: var(--accent); }
+  .topic-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .topic-preview {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .p2-content {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 40px;
+  }
+
+  .topic-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+  }
+
+  .topic-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  .topic-badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    background: rgba(167,139,250,0.1);
+    border: 1px solid rgba(167,139,250,0.2);
+    border-radius: 6px;
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+
+  .topic-title-en {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .topic-title-vi {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .keywords-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .keyword-tag {
+    background: rgba(79,138,255,0.1);
+    border: 1px solid rgba(79,138,255,0.25);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  /* Writing panels */
+  .write-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .write-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .write-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .write-label.vi-label { color: var(--yellow); }
+  .write-label.en-label { color: var(--green); }
+
+  .write-textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 140px;
+    outline: none;
+    transition: border-color .2s;
+    line-height: 1.7;
+  }
+  .write-textarea.vi-area:focus { border-color: var(--yellow); }
+  .write-textarea.en-area:focus { border-color: var(--green); }
+  .write-textarea::placeholder { color: var(--muted); }
+
+  .hint-toggle-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .hint-vi-box {
+    background: rgba(251,191,36,0.06);
+    border: 1px solid rgba(251,191,36,0.25);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #fde68a;
+    display: none;
+  }
+  .hint-en-box {
+    background: rgba(52,211,153,0.06);
+    border: 1px solid rgba(52,211,153,0.25);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #a7f3d0;
+    display: none;
+  }
+  .hint-vi-box.show, .hint-en-box.show { display: block; animation: fadeIn .2s ease; }
+
+  .hint-vi-box .disc-marker { color: var(--yellow); font-weight: 600; }
+  .hint-en-box .disc-marker { color: var(--green); font-weight: 600; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .p2-grid { grid-template-columns: 1fr; height: auto; }
+    .p2-sidebar { max-height: 200px; }
+    .write-panels { grid-template-columns: 1fr; }
+    header { flex-wrap: wrap; gap: 10px; }
+  }
+
+  .empty-state {
+    text-align: center;
+    color: var(--muted);
+    padding: 60px 20px;
+    font-size: 14px;
+  }
+
+  .tag-pill {
+    display: inline-block;
+    background: rgba(79,138,255,.12);
+    border: 1px solid rgba(79,138,255,.2);
+    color: var(--accent);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+
+  .speak-rate-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+  }
+  .speak-rate-row label { font-size: 12px; color: var(--muted); }
+  .speak-rate-row input[type=range] {
+    width: 80px;
+    accent-color: var(--accent);
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Upload screen ── -->
+<div id="upload-screen">
+  <div class="logo">Speaking Lab</div>
+  <h1 class="upload-title">Tiếng Anh 3<br>Speaking Practice</h1>
+  <p class="upload-sub">Tải lên file <strong>.md</strong> theo cấu trúc bài học để bắt đầu ôn tập Part 1 &amp; Part 2.</p>
+  <div class="drop-zone" id="drop-zone">
+    <div class="drop-icon">📂</div>
+    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;">Kéo thả file vào đây</div>
+    <div class="drop-text">hoặc <span onclick="document.getElementById('file-input').click()" style="cursor:pointer">chọn file</span> từ máy tính</div>
+    <input type="file" id="file-input" accept=".md,text/plain">
+  </div>
+</div>
+
+<!-- ── Main app ── -->
+<div id="app">
+  <header>
+    <div class="header-title">🎙 Speaking Lab <span id="file-name-badge" class="tag-pill"></span></div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('p1')">Part 1 — Q&amp;A</button>
+      <button class="tab-btn" onclick="switchTab('p2')">Part 2 — Topics</button>
+    </div>
+    <button class="new-file-btn" onclick="resetApp()">⟵ Đổi file</button>
+  </header>
+
+  <!-- Part 1 -->
+  <div class="part-panel active" id="panel-p1">
+    <div class="p1-header">
+      <div class="p1-meta">Câu <span id="q-index-display">1</span> / <span id="q-total">0</span></div>
+      <div class="p1-nav">
+        <button class="nav-btn" id="btn-prev" onclick="goQ(-1)" disabled>‹</button>
+        <div class="q-counter" id="q-counter-text">1 / 0</div>
+        <button class="nav-btn" id="btn-next" onclick="goQ(1)">›</button>
+      </div>
+      <div class="speak-rate-row">
+        <label>Tốc độ:</label>
+        <input type="range" id="speak-rate" min="0.5" max="1.5" step="0.1" value="0.85">
+        <span id="rate-val" style="font-size:12px;color:var(--muted)">0.85</span>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+    </div>
+
+    <!-- Question card -->
+    <div class="q-card" id="q-card">
+      <div class="q-number" id="q-number-label">QUESTION 1</div>
+      <div class="q-actions">
+        <button class="action-btn speak-btn" id="btn-speak" onclick="speakQuestion()">🔊 Nghe câu hỏi</button>
+        <button class="action-btn" id="btn-hint-q-en" onclick="toggleHintPart('q-hint-en-box', this, '💡 Câu hỏi tiếng Anh', '🙈 Ẩn câu hỏi')">💡 Câu hỏi tiếng Anh</button>
+        <button class="action-btn" id="btn-hint-q-vi" onclick="toggleHintPart('q-hint-vi-box', this, '🇻🇳 Dịch câu hỏi', '🙈 Ẩn bản dịch')">🇻🇳 Dịch câu hỏi</button>
+      </div>
+      <div class="hint-box" id="q-hint-en-box" style="margin-bottom:6px">
+        <div class="en" id="q-hint-en"></div>
+      </div>
+      <div class="hint-box" id="q-hint-vi-box">
+        <div class="vi" id="q-hint-vi" style="margin-top:0"></div>
+      </div>
+    </div>
+
+    <!-- Answer area -->
+    <div class="answer-area">
+      <div class="answer-label">Câu trả lời của bạn</div>
+      <textarea class="answer-input" id="answer-input" placeholder="Viết hoặc luyện nói câu trả lời của bạn tại đây..."></textarea>
+      <div class="answer-hint-row" style="margin-top:12px">
+        <button class="action-btn" id="btn-hint-ans" onclick="toggleHint('ans-hint')">🌟 Xem gợi ý đáp án</button>
+        <button class="action-btn" id="btn-word-hint-p1" onclick="toggleP1WordHint(this)">🔤 Gợi ý từng từ</button>
+        <button class="action-btn speak-btn" onclick="speakAnswer()">🔊 Nghe đáp án mẫu</button>
+      </div>
+      <div id="p1-word-hint-section" style="display:none">
+        <div class="word-hint-label">Gợi ý từ tiếp theo</div>
+        <div class="word-hint-wrap" id="p1-word-hint"><span class="word-hint-status">Bắt đầu viết câu trả lời...</span></div>
+      </div>
+      <div class="ans-hint-box" id="ans-hint">
+        <div class="en" id="ans-hint-en"></div>
+        <div class="vi" id="ans-hint-vi"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Part 2 -->
+  <div class="part-panel" id="panel-p2">
+    <div class="p2-grid">
+      <div class="p2-sidebar">
+        <div class="sidebar-label">Danh sách chủ đề</div>
+        <div id="topic-list"></div>
+      </div>
+      <div class="p2-content" id="topic-content">
+        <div class="empty-state">← Chọn một chủ đề để bắt đầu</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ──────────────────────────────────────────────
+   DATA STRUCTURES
+────────────────────────────────────────────── */
+let part1Questions = [];  // [{q_en, q_vi, ans_en, ans_vi}]
+let part2Topics    = [];  // [{title_en, title_vi, keywords, body_en, body_vi}]
+let currentQIdx    = 0;
+
+/* ──────────────────────────────────────────────
+   FILE HANDLING
+────────────────────────────────────────────── */
+const dropZone  = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+
+dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) readFile(file);
+});
+fileInput.addEventListener('change', e => { if (e.target.files[0]) readFile(e.target.files[0]); });
+
+function readFile(file) {
+  const reader = new FileReader();
+  reader.onload = ev => {
+    parseMD(ev.target.result);
+    document.getElementById('file-name-badge').textContent = file.name;
+    document.getElementById('upload-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initPart1();
+    initPart2();
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function resetApp() {
+  part1Questions = []; part2Topics = []; currentQIdx = 0;
+  document.getElementById('upload-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  fileInput.value = '';
+}
+
+/* ──────────────────────────────────────────────
+   MARKDOWN PARSER
+────────────────────────────────────────────── */
+function parseMD(md) {
+  part1Questions = [];
+  part2Topics    = [];
+
+  // Split into Part 1 and Part 2 sections
+  const part2Match = md.match(/^# Part 2\s*$/m);
+  let p1Text = md, p2Text = '';
+  if (part2Match) {
+    const idx = md.indexOf(part2Match[0]);
+    p1Text = md.slice(0, idx);
+    p2Text = md.slice(idx);
+  }
+
+  /* ── Parse Part 1 ── */
+  // Split by ## Question N
+  const qBlocks = p1Text.split(/^## Question \d+\s*$/m).slice(1);
+  qBlocks.forEach(block => {
+    const lines = block.split('\n').map(l => l.trim()).filter(l => l);
+
+    // Question EN: line with **...**
+    const qEnLineIdx = lines.findIndex(l => l.startsWith('**') && l.endsWith('**'));
+    const qEnLine = qEnLineIdx >= 0 ? lines[qEnLineIdx] : '';
+    const q_en = qEnLine.replace(/\*\*/g, '').trim();
+
+    // Question VI: the very next non-empty line after the EN line, wrapped in parens
+    let q_vi = '';
+    if (qEnLineIdx >= 0) {
+      const nextLine = lines[qEnLineIdx + 1] || '';
+      if (nextLine.startsWith('(') && nextLine.endsWith(')')) {
+        q_vi = nextLine.slice(1, -1).trim();
+      } else {
+        // fallback: try regex on EN line itself
+        const m = qEnLine.match(/\(([^)]+)\)\s*\*\*\s*$/) || qEnLine.match(/\(([^)]+)\)/);
+        if (m) q_vi = m[1].trim();
+      }
+    }
+
+    // Answer line
+    const ansIdx  = lines.findIndex(l => l.toLowerCase().startsWith('answer:'));
+    const transIdx = lines.findIndex(l => l.toLowerCase().startsWith('dịch:'));
+
+    const ans_en = ansIdx  >= 0 ? (lines.slice(ansIdx+1, transIdx >= 0 ? transIdx : ansIdx+2).join(' ').trim()
+                                    || lines[ansIdx].replace(/^answer:\s*/i, '').trim()) : '';
+    const ans_vi = transIdx >= 0 ? (lines.slice(transIdx+1).join(' ').trim()
+                                    || lines[transIdx].replace(/^dịch:\s*/i, '').trim()) : '';
+
+    const rawAns = lines[ansIdx] || '';
+    const rawVI  = lines[transIdx] || '';
+
+    part1Questions.push({
+      q_en,
+      q_vi,
+      ans_en: ans_en || rawAns.replace(/^answer:\s*/i,'').trim(),
+      ans_vi: ans_vi || rawVI.replace(/^dịch:\s*/i,'').trim()
+    });
+  });
+
+  /* ── Parse Part 2 ── */
+  // Split by ## TOPIC N
+  const topicBlocks = p2Text.split(/^## TOPIC \d+[:\s]*/m).slice(1);
+  topicBlocks.forEach((block, i) => {
+    const lines = block.split('\n').map(l => l.trim());
+
+    // Title line (first non-empty line)
+    const titleLine = lines.find(l => l.length > 0) || '';
+
+    // Keywords: second non-empty line (before ===)
+    const sepIdx = lines.findIndex(l => l.startsWith('====='));
+    const kwLine = lines.slice(1, sepIdx >= 0 ? sepIdx : 3).find(l => l.length > 0 && !l.startsWith('=')) || '';
+    const keywords = kwLine.split(',').map(k => k.trim()).filter(k => k);
+
+    // English body: text between first ====== and ### Vietnamese Translation
+    const viTransIdx = lines.findIndex(l => l.includes('Vietnamese Translation'));
+    const bodyEnLines = lines.slice(sepIdx + 1, viTransIdx >= 0 ? viTransIdx : lines.length)
+      .filter(l => !l.startsWith('=====') && l.length > 0);
+
+    // Vietnamese body: after ### Vietnamese Translation, then ======
+    const sep2Idx = lines.findIndex((l, idx) => idx > viTransIdx && l.startsWith('====='));
+    let bodyViLines = [];
+    if (viTransIdx >= 0) {
+      const start = sep2Idx >= 0 ? sep2Idx + 1 : viTransIdx + 1;
+      bodyViLines = lines.slice(start).filter(l => !l.startsWith('=====') && !l.startsWith('##') && l.length > 0);
+    }
+
+    // Extract Vietnamese title from body if present (lines like "Chủ đề N:")
+    const vi_title_match = bodyViLines.find(l => l.toLowerCase().startsWith('chủ đề'));
+    const title_vi = vi_title_match ? vi_title_match.replace(/^chủ đề\s*\d+\s*[:：]\s*/i,'').trim() : '';
+    if (vi_title_match) bodyViLines = bodyViLines.filter(l => l !== vi_title_match);
+    // Find and save the Vietnamese keyword line (short comma-separated line)
+    const kwViLine = bodyViLines.find(l => l.includes(',') && l.length < 120 && !l.includes('vì') && !l.includes('Hôm') && !l.includes('Đầu tiên'));
+    const keywords_vi = kwViLine ? kwViLine.split(',').map(k => k.trim()).filter(k => k) : [];
+    if (kwViLine) bodyViLines = bodyViLines.filter(l => l !== kwViLine);
+
+    part2Topics.push({
+      idx: i + 1,
+      title_en: titleLine.replace(/\.$/, ''),
+      title_vi: title_vi,
+      keywords: keywords,
+      keywords_vi: keywords_vi,
+      body_en: bodyEnLines.join('\n'),
+      body_vi: bodyViLines.join('\n')
+    });
+  });
+}
+
+/* ──────────────────────────────────────────────
+   TAB SWITCHING
+────────────────────────────────────────────── */
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (i === 0 && tab==='p1') || (i === 1 && tab==='p2')));
+  document.getElementById('panel-p1').classList.toggle('active', tab==='p1');
+  document.getElementById('panel-p2').classList.toggle('active', tab==='p2');
+}
+
+/* ──────────────────────────────────────────────
+   PART 1
+────────────────────────────────────────────── */
+function initPart1() {
+  currentQIdx = 0;
+  document.getElementById('q-total').textContent = part1Questions.length;
+  document.getElementById('q-index-display').textContent = 1;
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = part1Questions[currentQIdx];
+  if (!q) return;
+
+  const total = part1Questions.length;
+  const num   = currentQIdx + 1;
+
+  document.getElementById('q-number-label').textContent = `QUESTION ${num}`;
+  document.getElementById('q-index-display').textContent = num;
+  document.getElementById('q-counter-text').textContent = `${num} / ${total}`;
+  document.getElementById('progress-bar').style.width = `${(num/total)*100}%`;
+  document.getElementById('btn-prev').disabled = currentQIdx === 0;
+  document.getElementById('btn-next').disabled = currentQIdx === total - 1;
+
+  // Reset hints
+  ['q-hint-en-box','q-hint-vi-box','ans-hint'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('show');
+  });
+  document.getElementById('btn-hint-q-en').textContent  = '💡 Câu hỏi tiếng Anh';
+  document.getElementById('btn-hint-q-vi').textContent  = '🇻🇳 Dịch câu hỏi';
+  document.getElementById('btn-hint-ans').textContent   = '🌟 Xem gợi ý đáp án';
+
+  // Reset word hint
+  const whSection = document.getElementById('p1-word-hint-section');
+  if (whSection) whSection.style.display = 'none';
+  const whBtn = document.getElementById('btn-word-hint-p1');
+  if (whBtn) { whBtn.textContent = '🔤 Gợi ý từng từ'; whBtn.classList.remove('active-hint'); }
+  const whEl = document.getElementById('p1-word-hint');
+  if (whEl) whEl.innerHTML = '<span class="word-hint-status">Bắt đầu viết câu trả lời...</span>';
+
+  document.getElementById('answer-input').value = '';
+
+  // Populate hint content
+  document.getElementById('q-hint-en').textContent = q.q_en;
+  document.getElementById('q-hint-vi').textContent = q.q_vi;
+  document.getElementById('ans-hint-en').textContent = q.ans_en;
+  document.getElementById('ans-hint-vi').textContent = q.ans_vi;
+}
+
+function goQ(dir) {
+  currentQIdx = Math.max(0, Math.min(part1Questions.length - 1, currentQIdx + dir));
+  renderQuestion();
+}
+
+function toggleHintPart(id, btn, labelShow, labelHide) {
+  const box = document.getElementById(id);
+  const showing = box.classList.contains('show');
+  box.classList.toggle('show', !showing);
+  btn.textContent = showing ? labelShow : labelHide;
+}
+
+function toggleHint(id) {
+  const box = document.getElementById(id);
+  const showing = box.classList.contains('show');
+  box.classList.toggle('show', !showing);
+  if (id === 'ans-hint') document.getElementById('btn-hint-ans').textContent = showing ? '🌟 Xem gợi ý đáp án' : '🙈 Ẩn đáp án';
+}
+
+let p1WordHintActive = false;
+function toggleP1WordHint(btn) {
+  p1WordHintActive = !p1WordHintActive;
+  const section = document.getElementById('p1-word-hint-section');
+  section.style.display = p1WordHintActive ? 'block' : 'none';
+  btn.textContent = p1WordHintActive ? '🙈 Ẩn gợi ý từng từ' : '🔤 Gợi ý từng từ';
+  if (p1WordHintActive) {
+    // trigger immediately based on current input
+    document.getElementById('answer-input').dispatchEvent(new Event('input'));
+  }
+}
+
+/* Speech */
+function speakText(text, rate) {
+  if (!window.speechSynthesis) return alert('Trình duyệt không hỗ trợ phát âm.');
+  speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang  = 'en-US';
+  utt.rate  = rate || parseFloat(document.getElementById('speak-rate').value);
+  speechSynthesis.speak(utt);
+}
+
+function speakQuestion() {
+  const q = part1Questions[currentQIdx];
+  if (!q) return;
+  const btn = document.getElementById('btn-speak');
+  btn.classList.add('speaking');
+  btn.textContent = '🔊 Đang phát...';
+  const utt = new SpeechSynthesisUtterance(q.q_en);
+  utt.lang = 'en-US';
+  utt.rate = parseFloat(document.getElementById('speak-rate').value);
+  utt.onend = () => { btn.classList.remove('speaking'); btn.textContent = '🔊 Nghe câu hỏi'; };
+  speechSynthesis.cancel();
+  speechSynthesis.speak(utt);
+}
+
+function speakAnswer() {
+  const q = part1Questions[currentQIdx];
+  if (!q) return;
+  speakText(q.ans_en);
+}
+
+document.getElementById('speak-rate').addEventListener('input', function() {
+  document.getElementById('rate-val').textContent = parseFloat(this.value).toFixed(2);
+});
+
+/* Keyboard navigation */
+document.addEventListener('keydown', e => {
+  const panel = document.getElementById('panel-p1');
+  if (!panel.classList.contains('active')) return;
+  if (document.activeElement && document.activeElement.tagName === 'TEXTAREA') return;
+  if (e.key === 'ArrowRight') goQ(1);
+  if (e.key === 'ArrowLeft')  goQ(-1);
+  if (e.key === ' ') { e.preventDefault(); speakQuestion(); }
+});
+
+/* ──────────────────────────────────────────────
+   PART 2
+────────────────────────────────────────────── */
+function initPart2() {
+  const listEl = document.getElementById('topic-list');
+  listEl.innerHTML = '';
+
+  part2Topics.forEach((t, i) => {
+    const div = document.createElement('div');
+    div.className = 'topic-item';
+    div.id = `titem-${i}`;
+    div.innerHTML = `<div class="topic-num">TOPIC ${t.idx}</div>
+                     <div class="topic-preview">${t.title_en}</div>`;
+    div.onclick = () => showTopic(i);
+    listEl.appendChild(div);
+  });
+}
+
+function showTopic(idx) {
+  document.querySelectorAll('.topic-item').forEach((el, i) => el.classList.toggle('active', i === idx));
+  const t = part2Topics[idx];
+  const content = document.getElementById('topic-content');
+  const highlighted = highlightMarkers(t.body_en);
+
+  // Build Vietnamese title: from body_vi first line that looks like a title, or keywords translated
+  // We'll show body_vi first paragraph as the "topic translation" if title_vi is empty
+  const displayTitleVi = t.title_vi || '';
+
+  content.innerHTML = `
+    <div class="topic-card">
+      <div class="topic-header">
+        <div style="flex:1">
+          <div class="topic-title-en">${t.title_en}</div>
+          <div class="topic-title-vi" style="color:var(--yellow);font-size:14px;margin-top:4px;font-style:italic">
+            ${displayTitleVi ? displayTitleVi : '<span style="color:var(--muted);font-size:12px">— xem bản dịch đề bên dưới —</span>'}
+          </div>
+        </div>
+        <span class="topic-badge">TOPIC ${t.idx}</span>
+      </div>
+
+      <!-- Đề bài dịch tiếng Việt hiển thị sẵn -->
+      <div style="background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:12px 16px;margin-bottom:14px;">
+        <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--yellow);text-transform:uppercase;margin-bottom:6px;">📋 Đề bài (tiếng Việt)</div>
+        <div style="font-size:13px;color:#fde68a;line-height:1.6">${t.body_vi.split('\n').slice(0,1).join('') || displayTitleVi || t.title_en}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px">Từ khóa: ${(t.keywords_vi && t.keywords_vi.length ? t.keywords_vi : t.keywords).join(', ')}</div>
+      </div>
+
+      <div class="keywords-row">
+        ${t.keywords.map(k => `<span class="keyword-tag">• ${k}</span>`).join('')}
+      </div>
+
+      <div class="write-panels">
+        <div class="write-block">
+          <div class="write-label vi-label">🇻🇳 Bản tiếng Việt của bạn</div>
+          <textarea class="write-textarea vi-area" placeholder="Viết bản tiếng Việt mà bạn đã chuẩn bị..."></textarea>
+        </div>
+        <div class="write-block">
+          <div class="write-label en-label">🇬🇧 Bản tiếng Anh của bạn</div>
+          <textarea class="write-textarea en-area" id="en-area-${idx}" placeholder="Viết bản tiếng Anh mà bạn đã chuẩn bị..." oninput="p2WordHintUpdate(${idx})"></textarea>
+          <div style="margin-top:8px">
+            <button class="action-btn" id="btn-word-hint-p2-${idx}" onclick="toggleP2WordHint(${idx}, this)" style="font-size:12px;padding:7px 14px">🔤 Gợi ý từng từ</button>
+          </div>
+          <div id="word-hint-section-${idx}" style="display:none">
+            <div class="word-hint-label">Gợi ý từ tiếp theo</div>
+            <div class="word-hint-wrap" id="word-hint-${idx}"><span class="word-hint-status">Bắt đầu viết để nhận gợi ý...</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hint-toggle-row">
+        <button class="action-btn" onclick="toggleP2Hint('hint-vi-${idx}', this)" style="color:var(--yellow);border-color:rgba(251,191,36,.3)">
+          🇻🇳 Gợi ý bản tiếng Việt
+        </button>
+        <button class="action-btn" onclick="toggleP2Hint('hint-en-${idx}', this)" style="color:var(--green);border-color:rgba(52,211,153,.3)">
+          🇬🇧 Gợi ý bản tiếng Anh
+        </button>
+        <button class="action-btn speak-btn" onclick="speakTopic(${idx})">
+          🔊 Nghe bài tiếng Anh
+        </button>
+      </div>
+
+      <div class="hint-vi-box" id="hint-vi-${idx}">
+        ${t.body_vi.split('\n').map(l => `<p style="margin-bottom:8px">${markVI(l)}</p>`).join('')}
+      </div>
+      <div class="hint-en-box" id="hint-en-${idx}">
+        ${highlighted.split('\n').map(l => `<p style="margin-bottom:8px">${l}</p>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function toggleP2Hint(id, btn) {
+  const box = document.getElementById(id);
+  const isVi = id.includes('hint-vi');
+  const showing = box.classList.contains('show');
+  box.classList.toggle('show', !showing);
+  if (isVi) btn.textContent = showing ? '🇻🇳 Gợi ý bản tiếng Việt' : '🙈 Ẩn tiếng Việt';
+  else       btn.textContent = showing ? '🇬🇧 Gợi ý bản tiếng Anh' : '🙈 Ẩn tiếng Anh';
+}
+
+function speakTopic(idx) {
+  const t = part2Topics[idx];
+  if (!t) return;
+  const clean = t.body_en.replace(/\*\*/g,'');
+  speakText(clean, 0.85);
+}
+
+/* ──────────────────────────────────────────────
+   WORD-BY-WORD HINT ENGINE
+────────────────────────────────────────────── */
+// Normalize text: remove bold markers, collapse whitespace, trim
+function normalizeText(t) {
+  return t.replace(/\*\*/g, '').replace(/\s+/g, ' ').trim();
+}
+
+// Tokenize into words (preserving punctuation attached to words)
+function tokenize(text) {
+  return normalizeText(text).split(/\s+/).filter(w => w.length > 0);
+}
+
+// Compare ignoring punctuation and case for "matches"
+function wordMatch(a, b) {
+  const clean = s => s.toLowerCase().replace(/[.,!?;:'"()\-]/g, '');
+  return clean(a) === clean(b);
+}
+
+const p2WordHintActive = {};
+
+function toggleP2WordHint(idx, btn) {
+  p2WordHintActive[idx] = !p2WordHintActive[idx];
+  const section = document.getElementById(`word-hint-section-${idx}`);
+  section.style.display = p2WordHintActive[idx] ? 'block' : 'none';
+  btn.textContent = p2WordHintActive[idx] ? '🙈 Ẩn gợi ý từng từ' : '🔤 Gợi ý từng từ';
+  if (p2WordHintActive[idx]) {
+    const ta = document.getElementById(`en-area-${idx}`);
+    if (ta) p2WordHintUpdate(idx);
+  }
+}
+
+function p2WordHintUpdate(idx) {
+  if (!p2WordHintActive[idx]) return;
+  const hintEl = document.getElementById(`word-hint-${idx}`);
+  if (!hintEl) return;
+  const t = part2Topics[idx];
+  if (!t) return;
+  const ta = document.getElementById(`en-area-${idx}`);
+  if (!ta) return;
+
+  const referenceTokens = tokenize(t.body_en);
+  const userTokens = tokenize(ta.value);
+
+  if (userTokens.length === 0) {
+    hintEl.innerHTML = `<span class="word-hint-status">Bắt đầu viết để nhận gợi ý...</span>`;
+    return;
+  }
+  let matchLen = 0;
+  for (let i = 0; i < userTokens.length && i < referenceTokens.length; i++) {
+    if (wordMatch(userTokens[i], referenceTokens[i])) matchLen = i + 1;
+    else break;
+  }
+  if (matchLen >= referenceTokens.length) {
+    hintEl.innerHTML = `<span class="word-hint-ok">✅ Hoàn thành! Bạn đã viết đúng toàn bộ đoạn văn mẫu.</span>`;
+    return;
+  }
+  const lastUserWord = userTokens[userTokens.length - 1];
+  const expectedAtPos = referenceTokens[userTokens.length - 1];
+  const isCurrentWrong = expectedAtPos && !wordMatch(lastUserWord, expectedAtPos);
+  if (isCurrentWrong && userTokens.length > matchLen) {
+    hintEl.innerHTML = `
+      <span class="word-hint-status" style="color:var(--red)">⚠ Từ thứ ${matchLen+1} chưa đúng —</span>
+      <span class="word-hint-pill" style="border-color:rgba(248,113,113,.4);color:var(--red);background:rgba(248,113,113,.1)">💡 ${referenceTokens[matchLen]}</span>
+    `;
+    return;
+  }
+  hintEl.innerHTML = `
+    <span class="word-hint-status">${matchLen}/${referenceTokens.length} từ ✓ — từ tiếp theo:</span>
+    <span class="word-hint-pill">💡 ${referenceTokens[matchLen]}</span>
+  `;
+}
+
+// Wire Part 1 answer input to word hint
+document.getElementById('answer-input').addEventListener('input', function() {
+  if (!p1WordHintActive) return;
+  const hintEl = document.getElementById('p1-word-hint');
+  const q = part1Questions[currentQIdx];
+  if (!q || !hintEl) return;
+
+  const referenceTokens = tokenize(q.ans_en);
+  const userTokens = tokenize(this.value);
+
+  if (userTokens.length === 0) {
+    hintEl.innerHTML = `<span class="word-hint-status">Bắt đầu viết để nhận gợi ý...</span>`;
+    return;
+  }
+
+  let matchLen = 0;
+  for (let i = 0; i < userTokens.length && i < referenceTokens.length; i++) {
+    if (wordMatch(userTokens[i], referenceTokens[i])) matchLen = i + 1;
+    else break;
+  }
+
+  if (matchLen >= referenceTokens.length) {
+    hintEl.innerHTML = `<span class="word-hint-ok">✅ Hoàn thành! Câu trả lời khớp với đáp án mẫu.</span>`;
+    return;
+  }
+
+  const lastUserWord = userTokens[userTokens.length - 1];
+  const expectedAtPos = referenceTokens[userTokens.length - 1];
+  const isCurrentWrong = expectedAtPos && !wordMatch(lastUserWord, expectedAtPos);
+
+  if (isCurrentWrong && userTokens.length > matchLen) {
+    hintEl.innerHTML = `
+      <span class="word-hint-status" style="color:var(--red)">⚠ Từ thứ ${matchLen+1} chưa đúng —</span>
+      <span class="word-hint-pill" style="border-color:rgba(248,113,113,.4);color:var(--red);background:rgba(248,113,113,.1)">💡 ${referenceTokens[matchLen]}</span>
+    `;
+    return;
+  }
+
+  hintEl.innerHTML = `
+    <span class="word-hint-status">${matchLen}/${referenceTokens.length} từ ✓ — từ tiếp theo:</span>
+    <span class="word-hint-pill">💡 ${referenceTokens[matchLen]}</span>
+  `;
+});
+const MARKERS = [
+  "Today I'm going to talk about",
+  "First of all","Another important point is","Moreover","Overall, I think",
+  "For example","As a result","because","This is important because","is very important because",
+  "is very useful because"
+];
+function highlightMarkers(text) {
+  let out = text.replace(/\*\*(.*?)\*\*/g, (_, m) => `<span class="disc-marker">${m}</span>`);
+  return out;
+}
+function markVI(line) {
+  const viMarkers = ['Đầu tiên','Hôm nay','Một điểm quan trọng khác','Hơn nữa','Nhìn chung','Ví dụ','Kết quả là','vì','Điều này rất quan trọng','rất quan trọng'];
+  let out = line;
+  viMarkers.forEach(m => {
+    out = out.replace(new RegExp(m.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'g'), `<span class="disc-marker">${m}</span>`);
+  });
+  return out;
+}
+</script>
+</body>
+</html>
